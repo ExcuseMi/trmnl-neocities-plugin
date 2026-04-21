@@ -1,0 +1,46 @@
+---
+strategy: polling
+no_screen_padding: 'yes'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+framework_version: 
+serverless_language: 
+polling_url: 'https://neocities.org/browse?sort_by={{ trmnl.plugin_settings.custom_fields_values.sort_by | default: "random" }}&tag=&page={{ trmnl.system.timestamp_utc | modulo: trmnl.plugin_settings.custom_fields_values.max_page | plus: 1 }}'
+polling_headers: ''
+polling_body: ''
+id: 290436
+custom_fields:
+- keyname: author_info
+  name: About This Plugin
+  field_type: author_bio
+  description: The internet like it used to be: random Neocities sites, hand-crafted and weird.
+  github_url: https://github.com/ExcuseMi/trmnl-neocities-plugin
+  learn_more_url: https://neocities.org/browse
+  category: discovery
+  help_text: TRMNL X Ready
+- keyname: sort_by
+  field_type: select
+  name: Sort By
+  description: How to sort the Neocities page
+  options:
+  - Special Sauce: special_sauce
+  - Random: random
+  - Most Followed: most_followed
+  - Last Updated: last_updated
+  - Views: views
+  - Tipping Enabled: tipping_enabled
+  - Oldest: oldest
+  default: random
+  optional: false
+- keyname: max_page
+  field_type: number
+  name: Max Page
+  description: Randomly picks a page between 1 and this number on each refresh
+  min: 1
+  max: 999
+  step: 1
+  default: '10'
+  optional: false
+name: Neocities Sites
+refresh_interval: 60

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "4 sites parsed",
+    "input": {
+      "trmnl": {
+        "system": { "timestamp_utc": 1700000000 },
+        "plugin_settings": { "instance_name": "Neocities Browser", "strategy": "polling", "dark_mode": "no", "custom_fields_values": {} }
+      },
+      "data": "<ul><li id=\"username_jefbecker\"><a href=\"https://jefbecker.com\" class=\"neo-Screen-Shot\" title=\"JEFBECKER\"><span class=\"img-Holder\" style=\"background:url(/site_screenshots/21/53/jefbecker/index.html.540x405.webp) no-repeat;\"><img src=\"/img/placeholder.png\" alt=\"JEFBECKER\" /></span></a><div class=\"title\"><a href=\"https://jefbecker.com\" title=\"JEFBECKER\">JEFBECKER</a></div></li><li id=\"username_backlit\"><a href=\"https://backlit.neocities.org\" class=\"neo-Screen-Shot\" title=\"Backlit\"><span class=\"img-Holder\" style=\"background:url(/site_screenshots/35/35/backlit/index.html.540x405.webp) no-repeat;\"><img src=\"/img/placeholder.png\" alt=\"Backlit\" /></span></a><div class=\"title\"><a href=\"https://backlit.neocities.org\" title=\"Backlit\">Backlit</a></div></li><li id=\"username_cyberneticdryad\"><a href=\"https://cyberneticdryad.neocities.org\" class=\"neo-Screen-Shot\" title=\"Dryad Glen\"><span class=\"img-Holder\" style=\"background:url(/site_screenshots/43/06/cyberneticdryad/index.html.540x405.webp) no-repeat;\"><img src=\"/img/placeholder.png\" alt=\"Dryad Glen\" /></span></a><div class=\"title\"><a href=\"https://cyberneticdryad.neocities.org\" title=\"Dryad Glen\">Dryad Glen</a></div></li><li id=\"username_monnie\"><a href=\"https://monnie.neocities.org\" class=\"neo-Screen-Shot\" title=\"Monnie\"><span class=\"img-Holder\" style=\"background:url(/site_screenshots/24/52/monnie/index.html.540x405.webp) no-repeat;\"><img src=\"/img/placeholder.png\" alt=\"Monnie\" /></span></a><div class=\"title\"><a href=\"https://monnie.neocities.org\" title=\"Monnie\">Monnie</a></div></li><li id=\"username_extra\"><a href=\"https://extra.neocities.org\" class=\"neo-Screen-Shot\" title=\"Extra Site\"><span class=\"img-Holder\" style=\"background:url(/site_screenshots/99/00/extra/index.html.540x405.webp) no-repeat;\"><img src=\"/img/placeholder.png\" alt=\"Extra\" /></span></a></li></ul>"
+    }
+  },
+  {
+    "name": "empty response",
+    "input": {
+      "trmnl": {
+        "system": { "timestamp_utc": 1700000000 },
+        "plugin_settings": { "instance_name": "Neocities Browser", "strategy": "polling", "dark_mode": "no", "custom_fields_values": {} }
+      },
+      "data": ""
+    }
+  }
+]
