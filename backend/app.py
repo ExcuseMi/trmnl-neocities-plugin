@@ -48,16 +48,21 @@ async def sites():
     ttl = REFRESH_HOURS * 3600
     kwargs = dict(sort_by=sort_by)
 
-    if await _provider.is_expired(ttl, **kwargs):
+    expired = await _provider.is_expired(ttl, **kwargs)
+    if expired:
         cached = await _provider.get_cached(**kwargs)
         if cached:
+            log.info('sites: cache stale (sort=%s pool=%d) — serving stale, refreshing async', sort_by, len(cached))
             asyncio.create_task(_provider.refresh(**kwargs))
         else:
+            log.info('sites: cache cold (sort=%s) — blocking fetch', sort_by)
             cached = await _provider.refresh(**kwargs)
     else:
         cached = await _provider.get_cached(**kwargs)
+        log.info('sites: cache hit (sort=%s pool=%d)', sort_by, len(cached) if cached else 0)
 
     if not cached:
+        log.error('sites: no data available (sort=%s) — returning 503', sort_by)
         return jsonify({'error': 'Neocities unreachable'}), 503
 
     selected = [dict(s) for s in random.sample(cached, min(SITES_PER_REQUEST, len(cached)))]
@@ -65,10 +70,13 @@ async def sites():
         colors = await asyncio.gather(*[
             get_edge_color(s['image'], session, _redis) for s in selected
         ])
+    color_count = 0
     for site, color in zip(selected, colors):
         if color:
             site['bg_color'] = color
+            color_count += 1
 
+    log.info('sites: returning %d sites, %d with bg_color (sort=%s)', len(selected), color_count, sort_by)
     return jsonify({'data': selected})
 
 

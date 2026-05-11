@@ -51,5 +51,5 @@ async def get_edge_color(image_url: str, session: aiohttp.ClientSession, redis) 
             pass
         return color
     except Exception as exc:
-        log.debug('Edge color unavailable for %s: %s', image_url, exc)
+        log.warning('Edge color unavailable for %s: %s', image_url, exc)
         return None

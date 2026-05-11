@@ -28,12 +28,15 @@ class NeocitiesProvider(BaseProvider):
                 url = _BROWSE_URL.format(sort_by=sort_by, page=page)
                 try:
                     async with session.get(url, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                        status = resp.status
                         resp.raise_for_status()
                         text = await resp.text()
+                    log.debug('Neocities page %d (sort=%s) HTTP %d len=%d', page, sort_by, status, len(text))
                 except Exception as exc:
                     log.warning('Neocities page %d (sort=%s) failed: %s', page, sort_by, exc)
                     continue
 
+                page_count = 0
                 for m in _RE_SITE.finditer(text):
                     site_url = m.group(1)
                     if site_url in seen:
@@ -43,6 +46,9 @@ class NeocitiesProvider(BaseProvider):
                     path = m.group(3)
                     image = ('https://neocities.org' + path) if path.startswith('/') else path
                     sites.append({'name': name, 'url': site_url, 'image': image})
+                    page_count += 1
+                if page_count == 0:
+                    log.warning('Neocities page %d (sort=%s) returned 0 matches — possible block/redirect (len=%d)', page, sort_by, len(text))
 
         log.info('Scraped %d unique sites (sort_by=%s, pages=%d)', len(sites), sort_by, _PAGES)
         return sites if sites else None
