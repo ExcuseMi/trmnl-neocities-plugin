@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./backend
+    container_name: trmnl-neocities-backend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${BACKEND_PORT:-8743}:8080"
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - neocities_redis_data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+volumes:
+  neocities_redis_data:
