@@ -3,6 +3,7 @@ import logging
 import os
 import random
 
+import aiohttp
 from quart import Quart, jsonify, request
 from redis.asyncio import Redis
 
