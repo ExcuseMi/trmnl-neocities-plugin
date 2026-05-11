@@ -7,6 +7,7 @@ from quart import Quart, jsonify, request
 from redis.asyncio import Redis
 
 from modules.providers.neocities import NeocitiesProvider
+from modules.utils.edge_color import get_edge_color
 from modules.utils.ip_whitelist import init_ip_whitelist, require_tiered_access
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
@@ -58,7 +59,16 @@ async def sites():
     if not cached:
         return jsonify({'error': 'Neocities unreachable'}), 503
 
-    return jsonify({'data': random.sample(cached, min(SITES_PER_REQUEST, len(cached)))})
+    selected = [dict(s) for s in random.sample(cached, min(SITES_PER_REQUEST, len(cached)))]
+    async with aiohttp.ClientSession() as session:
+        colors = await asyncio.gather(*[
+            get_edge_color(s['image'], session, _redis) for s in selected
+        ])
+    for site, color in zip(selected, colors):
+        if color:
+            site['bg_color'] = color
+
+    return jsonify({'data': selected})
 
 
 @app.route('/health')

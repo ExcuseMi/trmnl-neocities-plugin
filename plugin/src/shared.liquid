@@ -12,9 +12,9 @@
 </style>
 <script>var __nc = {{ items | json }};</script>
 
-<div class="layout layout--stretch gap--none m--0 p--0">
-  <img class="image image--cover image-dither" src="https://neocities.org/img/placeholder.png" alt="" style="object-position: top;" />
-  <div class="nc-empty layout layout--col flex--center flex--middle gap--small" style="display:none; position:absolute; inset:0;">
+<div class="layout gap--none m--0 p--0 h--full w--full">
+  <img class="image image--cover image-dither w--full h--full" src="https://neocities.org/img/placeholder.png" alt="" style="object-position: top; object-fit: cover;" />
+  <div class="nc-empty flex flex--col flex--center flex--middle gap--small" style="display:none; position:absolute; inset:0;">
     <span class="title">Neocities is unreachable</span>
     <span class="label">Check back next refresh</span>
   </div>
@@ -45,6 +45,9 @@
 
   var thumb = host.querySelector("img");
   if (thumb && item.image) { thumb.src = item.image; thumb.alt = item.name || ''; }
+
+  var layout = host.querySelector(".layout");
+  if (layout && item.bg_color) { layout.style.backgroundColor = item.bg_color; }
 
   var nameEl = host.querySelector('.nc-name');
   if (nameEl) nameEl.textContent = item.name || '';
