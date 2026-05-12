@@ -30,12 +30,21 @@ _redis = Redis(
     decode_responses=True,
 )
 _provider = NeocitiesProvider(name='neocities', redis=_redis)
+_session: aiohttp.ClientSession | None = None
 
 
 @app.before_serving
 async def _startup():
+    global _session
+    _session = aiohttp.ClientSession()
     await init_ip_whitelist()
     log.info('Neocities backend started — cache TTL %.1fh', REFRESH_HOURS)
+
+
+@app.after_serving
+async def _shutdown():
+    if _session:
+        await _session.close()
 
 
 @app.route('/sites')
@@ -66,10 +75,9 @@ async def sites():
         return jsonify({'error': 'Neocities unreachable'}), 503
 
     selected = [dict(s) for s in random.sample(cached, min(SITES_PER_REQUEST, len(cached)))]
-    async with aiohttp.ClientSession() as session:
-        colors = await asyncio.gather(*[
-            get_edge_color(s['image'], session, _redis) for s in selected
-        ])
+    colors = await asyncio.gather(*[
+        get_edge_color(s['image'], _session, _redis) for s in selected
+    ])
     color_count = 0
     for site, color in zip(selected, colors):
         if color:

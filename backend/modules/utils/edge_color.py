@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import io
 import logging
@@ -9,6 +10,8 @@ log = logging.getLogger(__name__)
 
 _CACHE_PREFIX = 'neocities:edge:v1:'
 _CACHE_TTL = 7 * 86400  # 7 days — screenshots change rarely
+_SEMAPHORE = asyncio.Semaphore(2)  # max 2 concurrent fetches to the same host
+_RETRY_DELAYS = (1, 3)  # seconds between retries
 
 
 def _compute(data: bytes) -> str:
@@ -40,16 +43,25 @@ async def get_edge_color(image_url: str, session: aiohttp.ClientSession, redis) 
     except Exception:
         pass
 
-    try:
-        async with session.get(image_url, timeout=aiohttp.ClientTimeout(total=5)) as resp:
-            resp.raise_for_status()
-            data = await resp.read()
-        color = _compute(data)
-        try:
-            await redis.set(key, color, ex=_CACHE_TTL)
-        except Exception:
-            pass
-        return color
-    except Exception as exc:
-        log.warning('Edge color unavailable for %s: %s', image_url, exc)
+    async with _SEMAPHORE:
+        for attempt, delay in enumerate((*_RETRY_DELAYS, None)):
+            try:
+                async with session.get(image_url, timeout=aiohttp.ClientTimeout(total=8)) as resp:
+                    resp.raise_for_status()
+                    data = await resp.read()
+                color = _compute(data)
+                try:
+                    await redis.set(key, color, ex=_CACHE_TTL)
+                except Exception:
+                    pass
+                return color
+            except aiohttp.ServerDisconnectedError:
+                if delay is None:
+                    break
+                log.debug('Edge color server disconnected for %s, retry in %ds', image_url, delay)
+                await asyncio.sleep(delay)
+            except Exception as exc:
+                log.warning('Edge color unavailable for %s: %s', image_url, exc)
+                return None
+        log.warning('Edge color unavailable for %s: server disconnected after retries', image_url)
         return None
