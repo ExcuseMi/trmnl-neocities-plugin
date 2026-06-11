@@ -14,7 +14,7 @@ custom_fields:
 - keyname: author_info
   name: About This Plugin
   field_type: author_bio
-  description: "The internet like it used to be: random Neocities sites, hand-crafted and weird.<br />Inspired by <a href=\"https://www.youtube.com/watch?v=YSPKC5H8_2c\">A Web Revival: the Internet didn't die, you're just not on it</a> by @onionboots"
+  description: 'The internet like it used to be: random Neocities sites, hand-crafted and weird.<br />Inspired by <a href="https://www.youtube.com/watch?v=YSPKC5H8_2c">A Web Revival: the Internet didn''t die, you''re just not on it</a> by @onionboots'
   github_url: https://github.com/ExcuseMi/trmnl-neocities-plugin
   learn_more_url: https://neocities.org/browse
   category: discovery
