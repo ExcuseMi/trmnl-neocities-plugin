@@ -11,11 +11,24 @@ log = logging.getLogger(__name__)
 
 _BROWSE_URL = 'https://neocities.org/browse?sort_by={sort_by}&tag=&page={page}'
 _PAGES = int(os.getenv('NEOCITIES_PAGES', '5'))
+# One site on the browse page. Neocities changed the markup on 2026-10-25: background-image instead of background,
+# and a title spread over several lines; both forms are accepted
 _RE_SITE = re.compile(
     r'<a\s+href="([^"]+)"\s+class="neo-Screen-Shot"\s+title="([^"]+)"'
-    r'[^>]*>[\s\S]*?<span[^>]+style="background:url\(([^)]+)\)',
+    r'[^>]*>[\s\S]*?<span[^>]+style="background(?:-image)?\s*:\s*url\(([^)]+)\)',
 )
 _HEADERS = {'User-Agent': 'Mozilla/5.0 (compatible; TRMNL/1.0)'}
+
+
+def parse_sites(text: str) -> list[dict]:
+    """The sites on one browse page: name, url and screenshot"""
+    sites = []
+    for m in _RE_SITE.finditer(text):
+        name = ' '.join(html_module.unescape(m.group(2)).split())  # the title is spread over several lines
+        path = m.group(3).strip('\'"')
+        image = ('https://neocities.org' + path) if path.startswith('/') else path
+        sites.append({'name': name, 'url': m.group(1), 'image': image})
+    return sites
 
 
 class NeocitiesProvider(BaseProvider):
@@ -37,15 +50,11 @@ class NeocitiesProvider(BaseProvider):
                     continue
 
                 page_count = 0
-                for m in _RE_SITE.finditer(text):
-                    site_url = m.group(1)
-                    if site_url in seen:
+                for site in parse_sites(text):
+                    if site['url'] in seen:
                         continue
-                    seen.add(site_url)
-                    name = html_module.unescape(m.group(2))
-                    path = m.group(3)
-                    image = ('https://neocities.org' + path) if path.startswith('/') else path
-                    sites.append({'name': name, 'url': site_url, 'image': image})
+                    seen.add(site['url'])
+                    sites.append(site)
                     page_count += 1
                 if page_count == 0:
                     log.warning('Neocities page %d (sort=%s) returned 0 matches — possible block/redirect (len=%d)', page, sort_by, len(text))
