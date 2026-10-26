@@ -1,15 +1,18 @@
 ---
-strategy: polling
+strategy: static
 no_screen_padding: 'yes'
 dark_mode: 'no'
-static_data: ''
+static_data: "{}"
 polling_verb: get
 framework_version: 3.1.1
-serverless_language: node
-polling_url: 'https://trmnl.bettens.dev/neocities/sites?sort_by={{ trmnl.plugin_settings.custom_fields_values.sort_by | default: "special_sauce" }}'
+serverless_language: python
+refresh_interval_floor:
+polling_url:
 polling_headers: ''
 polling_body: ''
-id: 290436
+id: 519836
+oauth_enabled: 'false'
+oauth_pkce_enabled: 'no'
 custom_fields:
 - keyname: author_info
   name: About This Plugin
@@ -39,5 +42,6 @@ custom_fields:
   description: Overlay a scannable QR code so you can visit the site on your phone
   default: 'false'
   optional: true
-name: Neocities Sites
+name: Neocities Sites (serverless test)
+description:
 refresh_interval: 60
