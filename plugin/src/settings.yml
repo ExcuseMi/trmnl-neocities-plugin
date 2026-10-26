@@ -10,7 +10,7 @@ refresh_interval_floor:
 polling_url:
 polling_headers: ''
 polling_body: ''
-id: 519836
+id: 290436
 oauth_enabled: 'false'
 oauth_pkce_enabled: 'no'
 custom_fields:
@@ -42,6 +42,6 @@ custom_fields:
   description: Overlay a scannable QR code so you can visit the site on your phone
   default: 'false'
   optional: true
-name: Neocities Sites (serverless test)
+name: Neocities Sites
 description:
 refresh_interval: 60
